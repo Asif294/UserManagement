@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate,login,logout
 from rest_framework.authtoken.models import Token
-
+from rest_framework.permissions import IsAuthenticated
 #####  for mail verification 
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -56,7 +56,7 @@ class UserLoginApiView(APIView):
 
             if user:
                 token, created = Token.objects.get_or_create(user=user)
-                login(request,user)
+                # login(request,user)
                 return Response({
                     'token': token.key,
                     'user_id': user.id,
@@ -65,3 +65,19 @@ class UserLoginApiView(APIView):
             else:
                 return Response({'error': 'Invalid credentials'}, status=401)
         return Response(serializer.errors, status=400)
+
+# class UserLogoutApiView(APIView):
+#     def get(self,request):
+#         request.user.auth_token.delete()
+#         logout(request)
+#         return redirect('login')
+    
+class UserLogoutApiView(APIView):
+    permission_classes = [IsAuthenticated]  # Must provide token
+
+    def post(self, request):
+        try:
+            request.user.auth_token.delete()  # Delete token
+            return Response({'message': 'Logout successful!'})
+        except Token.DoesNotExist:
+            return Response({'error': 'Token not found or already deleted'}, status=400)
