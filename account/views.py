@@ -6,7 +6,7 @@ from django.utils.http import urlsafe_base64_encode,urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate,login,logout
 from rest_framework.authtoken.models import Token
 
 #####  for mail verification 
@@ -41,9 +41,27 @@ def activate(request, uid64, token):
     if user is not None and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-        return redirect('register')
+        return redirect('login')
     else:
         return redirect('register')
     
 class UserLoginApiView(APIView):
-    def post(self):
+    def post(self, request):
+        serializer = serializers.UserLoginSerializer(data=request.data)
+        if serializer.is_valid():
+            username = serializer.validated_data['username']
+            password = serializer.validated_data['password']
+
+            user = authenticate(username=username, password=password)
+
+            if user:
+                token, created = Token.objects.get_or_create(user=user)
+                login(request,user)
+                return Response({
+                    'token': token.key,
+                    'user_id': user.id,
+                    'username': user.username
+                })
+            else:
+                return Response({'error': 'Invalid credentials'}, status=401)
+        return Response(serializer.errors, status=400)
