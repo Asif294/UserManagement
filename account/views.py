@@ -69,7 +69,6 @@ class UserLoginApiView(APIView):
 class UserLogoutApiView(APIView):
     def get (self, request):
         user = request.user
-        print(user)
         token = getattr(user, 'auth_token', None)
         if token:
             token.delete()
