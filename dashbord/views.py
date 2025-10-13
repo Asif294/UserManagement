@@ -2,6 +2,7 @@ from rest_framework import viewsets, filters, pagination
 from django.contrib.auth.models import User
 from .serializers import UserListSerializer
 
+
 class UserViewPagination(pagination.PageNumberPagination):
     page_size = 100               
     page_query_param = 'page'    
