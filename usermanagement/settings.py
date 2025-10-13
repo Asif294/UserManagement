@@ -85,13 +85,12 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-REST_FRAMEWORK = {  
-   
+REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication', 
-    ], 
-} 
-
+        'rest_framework.authentication.SessionAuthentication',  # session-based auth
+        'rest_framework.authentication.TokenAuthentication',    # token-based auth
+    ],
+}
 
 
 # Password validation

@@ -9,6 +9,8 @@ from django.shortcuts import redirect
 from django.contrib.auth import authenticate,login,logout
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
+from http import HTTPStatus
+from rest_framework import status,viewsets
 #####  for mail verification 
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -51,33 +53,26 @@ class UserLoginApiView(APIView):
         if serializer.is_valid():
             username = serializer.validated_data['username']
             password = serializer.validated_data['password']
-
             user = authenticate(username=username, password=password)
-
             if user:
                 token, created = Token.objects.get_or_create(user=user)
-                # login(request,user)
+                login(request,user)
                 return Response({
                     'token': token.key,
                     'user_id': user.id,
-                    'username': user.username
                 })
             else:
                 return Response({'error': 'Invalid credentials'}, status=401)
         return Response(serializer.errors, status=400)
 
-# class UserLogoutApiView(APIView):
-#     def get(self,request):
-#         request.user.auth_token.delete()
-#         logout(request)
-#         return redirect('login')
-    
-class UserLogoutApiView(APIView):
-    permission_classes = [IsAuthenticated]  # Must provide token
 
-    def post(self, request):
-        try:
-            request.user.auth_token.delete()  # Delete token
-            return Response({'message': 'Logout successful!'})
-        except Token.DoesNotExist:
-            return Response({'error': 'Token not found or already deleted'}, status=400)
+class UserLogoutApiView(APIView):
+    def get (self, request):
+        user = request.user
+        print(user)
+        token = getattr(user, 'auth_token', None)
+        if token:
+            token.delete()
+            logout(request)
+            return Response({'message': 'Logout successful!'}, status=status.HTTP_200_OK)
+        return Response({'error': 'No active token found or already logged out.'}, status=status.HTTP_400_BAD_REQUEST)
