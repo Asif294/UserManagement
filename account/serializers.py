@@ -38,6 +38,7 @@ class UserLoginSerializer(serializers.Serializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True, required=False)
+   
 
     class Meta:
         model = User
@@ -47,7 +48,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         }
 
     def validate(self, data):
-       
         password = data.get('password')
         confirm_password = data.get('confirm_password')
         if password and confirm_password and password != confirm_password:
@@ -58,7 +58,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         validated_data.pop('confirm_password', None)
         password = validated_data.pop('password', None)
 
-    
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
@@ -66,4 +65,3 @@ class UserProfileSerializer(serializers.ModelSerializer):
             instance.set_password(password)
         instance.save()
         return instance
-
