@@ -36,13 +36,27 @@ class UserLoginSerializer(serializers.Serializer):
         fields = ['username', 'password']
 
 
+
 class UserProfileSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True, required=False)
-   
+
+    is_staff = serializers.BooleanField(read_only=True)
+    is_superuser = serializers.BooleanField(read_only=True)
+    is_active = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 'password', 'confirm_password']
+        fields = [
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+            'password',
+            'confirm_password',
+            'is_active',
+            'is_staff',
+            'is_superuser',
+        ]
         extra_kwargs = {
             'password': {'write_only': True},
         }

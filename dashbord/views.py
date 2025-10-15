@@ -9,7 +9,7 @@ class UserViewPagination(pagination.PageNumberPagination):
     page_size_query_param = 'page_size'  
     max_page_size = 10000000         
 
-class UserViewSet(viewsets.ReadOnlyModelViewSet):  
+class UserViewSet(viewsets.ModelViewSet):  
     queryset = User.objects.all().order_by('id')
     serializer_class = UserListSerializer
     filter_backends = [filters.SearchFilter]
