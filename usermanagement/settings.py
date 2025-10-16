@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'account',
     'dashbord',
     'corsheaders',
+    'django.contrib.sites',
 ]
 
 MIDDLEWARE = [
@@ -58,12 +59,17 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
 CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ['*']
+CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
 ROOT_URLCONF = 'usermanagement.urls'
 
 TEMPLATES = [

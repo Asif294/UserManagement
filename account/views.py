@@ -30,8 +30,11 @@ class UserRegistrationApiView(APIView):
             email=EmailMultiAlternatives(email_subject,'',to=[user.email])
             email.attach_alternative(email_body,"text/html")
             email.send()
-            return Response({'message': 'Chack your email for confirmation'})
-        return Response(serializer.errors, status=400)
+            return Response(
+                {'message': 'Check your email for confirmation.'},
+                status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def activate(request, uid64, token):
     try:
