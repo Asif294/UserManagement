@@ -32,7 +32,8 @@ class UserRegistrationApiView(APIView):
             email.send()
             return Response(
                 {'message': 'Check your email for confirmation.'},
-                status=status.HTTP_201_CREATED
+                status=status.HTTP_201_CREATED,
+                content_type="application/json"
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
