@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate,login,logout
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from http import HTTPStatus
+from rest_framework.authentication import TokenAuthentication
 from rest_framework import status,viewsets
 #####  for mail verification 
 from django.core.mail import EmailMultiAlternatives
@@ -76,15 +77,26 @@ class UserLoginApiView(APIView):
         return Response(serializer.errors, status=400)
 
 
+# class UserLogoutApiView(APIView):
+#     parser_classes=[IsAuthenticated]
+#     def POST(self, request):
+#         user = request.user
+#         token = getattr(user, 'auth_token', None)
+#         if token:
+#             token.delete()  
+#             logout(request)  
+#             return Response({'message': 'Logout successful!'}, status=status.HTTP_200_OK)
+#         return Response({'error': 'No active token found or already logged out.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 class UserLogoutApiView(APIView):
-    def get (self, request):
-        user = request.user
-        token = getattr(user, 'auth_token', None)
-        if token:
-            token.delete()
-            logout(request)
-            return Response({'message': 'Logout successful!'}, status=status.HTTP_200_OK)
-        return Response({'error': 'No active token found or already logged out.'}, status=status.HTTP_400_BAD_REQUEST)
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):  # <-- must use POST
+        if hasattr(request.user, "auth_token"):
+            request.user.auth_token.delete()
+        logout(request)
+        return Response({"detail": "Logged out successfully."}, status=status.HTTP_200_OK)
 
 
 class UserProfileView(APIView):
