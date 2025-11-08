@@ -14,7 +14,6 @@ class UserViewPagination(pagination.PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 10000000
 
-
 class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminUser]
     queryset = User.objects.all().order_by('id')
@@ -35,7 +34,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class ActiveUserCountView(APIView):
     permission_classes = [IsAdminUser]  
-
     def get(self, request):
         active_user_count = Token.objects.count()
         return Response({"total_logged_in_users": active_user_count})

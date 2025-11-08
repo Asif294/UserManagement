@@ -1,8 +1,6 @@
-# serializers.py
+
 from rest_framework import serializers
 from django.contrib.auth.models import User
-
-
 class UserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -14,5 +12,5 @@ class UserListSerializer(serializers.ModelSerializer):
             'email',
             'is_active',
             'is_superuser',
-            'is_staff',     # ✅ corrected (was is_stuff)
+            'is_staff',    
         ]
