@@ -9,6 +9,7 @@ urlpatterns = [
  path("login/", views.UserLoginApiView.as_view(), name="login"),
  path("logout/", views.UserLogoutApiView.as_view(), name="logout"),
  path('active/<uid64>/<token>/',views.activate,name='activate'),
-  path('profile/', views.UserProfileView.as_view(), name='user-profile'),
-   
+ path('profile/', views.UserProfileView.as_view(), name='user-profile'),
+ path('change_password/<int:id>/',views.UpdatePassword.as_view(), name='change_password'), 
+ path('redis-test/', views.redis_test, name='redis-test'),
 ]

@@ -56,6 +56,7 @@ def activate(request, uid64, token):
         return redirect('register')
     
 class UserLoginApiView(APIView):
+  
     def post(self, request):
         serializer = serializers.UserLoginSerializer(data=request.data)
         if serializer.is_valid():
@@ -76,17 +77,6 @@ class UserLoginApiView(APIView):
                 return Response({'error': 'Invalid credentials'}, status=401)
         return Response(serializer.errors, status=400)
 
-
-# class UserLogoutApiView(APIView):
-#     parser_classes=[IsAuthenticated]
-#     def POST(self, request):
-#         user = request.user
-#         token = getattr(user, 'auth_token', None)
-#         if token:
-#             token.delete()  
-#             logout(request)  
-#             return Response({'message': 'Logout successful!'}, status=status.HTTP_200_OK)
-#         return Response({'error': 'No active token found or already logged out.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserLogoutApiView(APIView):
@@ -112,3 +102,31 @@ class UserProfileView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class UpdatePassword(APIView):
+    serializer_class = serializers.UpdatePasswordSerializer
+
+    def put(self, request, id):
+        password = request.data['password']
+        new_password = request.data['new_password']
+
+        obj = get_user_model().objects.get(pk=id)
+        if not obj.check_password(raw_password=password):
+            return Response({'error': 'password not match'}, status=400)
+        else:
+            obj.set_password(new_password)
+            obj.save()
+            return Response({'success': 'password changed successfully'}, status=200)
+
+
+
+from django.http import HttpResponse
+from django.core.cache import cache
+def redis_test(request):
+    # Cache set
+    cache.set('myname', 'Asif', timeout=60)
+    # Cache get
+    value = cache.get('myname')
+    return HttpResponse(f"Redis cache value: {value}")
+
+
